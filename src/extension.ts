@@ -13,15 +13,17 @@ import {
   ExtensionContext,
   languages,
   Range,
+  TextEditor,
   TextDocument,
   TextDocumentWillSaveEvent,
   window,
   workspace,
   Position,
 } from "vscode";
+
 import {
-  isMdEditor,
   mdDocSelector,
+  findWikilinksInMarkdown,
   REGEX_FENCED_CODE_BLOCK,
 } from "./util/markdown-utils";
 import { WorkspaceFiles } from "./util/workspace-files";
@@ -30,6 +32,7 @@ import { WorkspaceFiles } from "./util/workspace-files";
  * Workspace config
  */
 const docConfig = { tab: "  ", eol: "\r\n" };
+
 function loadDocConfig() {
   // Load workspace config
   let activeEditor = window.activeTextEditor;
@@ -190,7 +193,11 @@ export function findWikilinks(doc: TextDocument) {
     .replace(/<!--[\W\w]+?-->/g, replacer) //// Remove comments
     .replace(/^---[\W\w]+?(\r?\n)---/, replacer); //// Remove YAML front matter
 
-  return WorkspaceFiles.findWikilinksInMarkdown(markdown);
+  return findWikilinksInMarkdown(markdown);
+}
+
+export function isMdEditor(editor: TextEditor) {
+  return editor && editor.document && editor.document.languageId === "markdown";
 }
 
 class WikilinkReferenceCodeLensProvider implements CodeLensProvider {

@@ -4,8 +4,6 @@
  */
 "use strict";
 
-import { TextEditor } from "vscode";
-
 export const REGEX_FENCED_CODE_BLOCK = /^( {0,3}|\t)```[^`\r\n]*$[\w\W]+?^( {0,3}|\t)``` *$/gm;
 
 export function markdownHeadingToPlainText(text: string) {
@@ -31,10 +29,6 @@ export const mdDocSelector = [
   { language: "markdown", scheme: "untitled" },
 ];
 
-export function isMdEditor(editor: TextEditor) {
-  return editor && editor.document && editor.document.languageId === "markdown";
-}
-
 export function findTopLevelHeading(md: string): string {
   const regex = rxMarkdownHeading(1);
   const match = regex.exec(md);
@@ -43,4 +37,20 @@ export function findTopLevelHeading(md: string): string {
   }
 
   return null;
+}
+
+export function findWikilinksInMarkdown(md: string): string[] {
+  const regex = rxWikiLink();
+  const unique = new Set();
+
+  let match;
+  while ((match = regex.exec(md))) {
+    // can be file-name or file.name.ext
+    const [, name] = match;
+    if (name) {
+      unique.add(name);
+    }
+  }
+
+  return [...unique] as string[];
 }

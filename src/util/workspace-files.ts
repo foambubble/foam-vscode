@@ -5,7 +5,7 @@
 import * as fs from "fs";
 import { basename } from "path";
 import { workspace } from "vscode";
-import { findTopLevelHeading, rxWikiLink } from "./markdown-utils";
+import { findTopLevelHeading } from "./markdown-utils";
 
 type FileIndex = {
   [id in string]: {
@@ -21,22 +21,6 @@ export class WorkspaceFiles {
   static WORKSPACE_FILES: FileIndex = {};
   static STARTED_INIT = false;
   static COMPLETED_INIT = false;
-
-  static findWikilinksInMarkdown(md: string): string[] {
-    const regex = rxWikiLink();
-    const unique = new Set();
-
-    let match;
-    while ((match = regex.exec(md))) {
-      // can be file-name or file.name.ext
-      const [, name] = match;
-      if (name) {
-        unique.add(name);
-      }
-    }
-
-    return [...unique] as string[];
-  }
 
   static async getFileIndex() {
     // @todo how to invalidate cache?
