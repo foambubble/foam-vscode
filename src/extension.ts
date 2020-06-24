@@ -133,7 +133,7 @@ async function generateReferenceList(doc: TextDocument): Promise<string[]> {
 
   for (const link of note.linkedNotes) {
     // [wiki-link-text]: wiki-link "Page title"
-    references.push(`[${link.id}]: ${link.filename} "${link.title}"`);
+    references.push(`[${link.id}]: ${link.id.split(".")[0]} "${link.title}"`);
   }
 
   // for (const backlink of note.backlinks) {
