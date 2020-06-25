@@ -1,10 +1,12 @@
 # foam-vscode
 
+**foam-vscode** is the VS Code extension for [Foam](https://foambubble.github.io/foam). 
+
+> ℹ️ foam-vscode doesn't do much on it's own. To learn how to use it, read [Foam documentation](https://foambubble.github.io/foam) and the [Getting started](https://foambubble.github.io/foam/#getting-started) guide.
+
 > ⚠️ foam-vscode is extremely early stage software. Use at your own peril.
 
-> See [foam-vscode/issues](https://github.com/foambubble/foam-vscode/issues) for known issues.
-
-**foam-vscode** is the VS Code extension for [Foam](https://foambubble.github.io/foam).
+> 👀 See [foam-vscode/issues](https://github.com/foambubble/foam-vscode/issues) for known issues.
 
 ## Features
 
