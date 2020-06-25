@@ -2,7 +2,9 @@
 
 > ⚠️ foam-vscode is extremely early stage software. Use at your own peril.
 
-**foam-vscode** is the VS Code extension for `Foam`(https://foambubble.github.io/foam)
+> See [foam-vscode/issues](https://github.com/foambubble/foam-vscode/issues) for known issues.
+
+**foam-vscode** is the VS Code extension for [Foam](https://foambubble.github.io/foam).
 
 ## Features
 
@@ -19,6 +21,14 @@ High tolerance for alpha-grade software.
 Unused aren't removed from reference lists until you restart VS Code. This will be fixed in future versions.
 
 ## Release Notes
+
+### 0.1.2
+
+Update extension name.
+
+### 0.1.1
+
+Fix markdown link format (`link.md` to just `link`).
 
 ### 0.1.0
 
