@@ -202,8 +202,9 @@ class WikilinkReferenceCodeLensProvider implements CodeLensProvider {
 
     return generateReferenceList(document).then((refs) => {
       let status =
-        getText(range).replace(/\r?\n|\r/g, docConfig.eol) ===
-        refs.join(docConfig.eol)
+        getText(range)
+          .replace(/\r?\n|\r/g, docConfig.eol)
+          .trimRight() === refs.join(docConfig.eol)
           ? "up to date"
           : "out of date";
 
