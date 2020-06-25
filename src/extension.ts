@@ -105,7 +105,7 @@ async function updateReferenceList() {
   } else {
     const refs = await generateReferenceList(doc);
     await editor.edit((editBuilder) => {
-      editBuilder.replace(range, refs.join(docConfig.eol));
+      editBuilder.replace(range, refs.join(docConfig.eol) + docConfig.eol);
     });
   }
 }
@@ -161,8 +161,8 @@ function detectReferenceListRange(doc: TextDocument): Range {
 
   // find line number and char position where footer ends
   const footer = [
-    fullText.split(REFERENCE_FOOTER)[0].split(docConfig.eol).length - 1,
-    REFERENCE_FOOTER.length,
+    fullText.split(REFERENCE_FOOTER)[0].split(docConfig.eol).length,
+    0,
   ];
 
   // if header and footer are on the same line, that means we have no references section
