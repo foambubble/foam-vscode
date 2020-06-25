@@ -34,6 +34,11 @@ Unused aren't removed from reference lists until you restart VS Code. This will 
 
 ## Release Notes
 
+### 0.1.4
+
+Fix flaky reference block replacement logic that would occasionally leave
+trailing fragments in the end of the document ([#3](https://github.com/foambubble/foam-vscode/issues/3))
+
 ### 0.1.3
 
 Include Getting Started instructions
