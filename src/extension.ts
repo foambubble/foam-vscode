@@ -69,6 +69,19 @@ export function activate(context: ExtensionContext) {
   );
 }
 
+async function clearReferenceListFromFile(inclusiveRefRange: Range) {
+  let editor = window.activeTextEditor;
+  const adjustedRefRange = new Range(
+    new Position(inclusiveRefRange.start.line-1, inclusiveRefRange.start.character),
+    new Position(inclusiveRefRange.end.line, inclusiveRefRange.end.character),
+  );
+  await editor.edit(function (editBuilder) {
+    if (editor) {
+      editBuilder.delete(adjustedRefRange);
+    }
+  });
+}
+
 async function createReferenceList() {
   let editor = window.activeTextEditor;
   if (!editor || !isMdEditor(editor)) {
@@ -77,11 +90,16 @@ async function createReferenceList() {
 
   let refs = await generateReferenceList(editor.document);
   if (refs && refs.length) {
+    const fullText = editor.document.getText();
+    const numberOfLinesWithText = fullText.trimRight().split(docConfig.eol).length;
+    const startPositionRef = numberOfLinesWithText + 1;
+    const documentLineCount = editor.document.lineCount;
+    const needLeftPadding = documentLineCount < startPositionRef;
     await editor.edit(function (editBuilder) {
       if (editor) {
         editBuilder.insert(
-          new Position(editor.document.lineCount + 1, 0),
-          docConfig.eol + refs.join(docConfig.eol) + docConfig.eol
+          new Position(numberOfLinesWithText + 1, 0),
+          (needLeftPadding ? docConfig.eol : "") + refs.join(docConfig.eol)
         );
       }
     });
@@ -100,14 +118,11 @@ async function updateReferenceList() {
   const doc = editor.document;
   const range = detectReferenceListRange(doc);
 
-  if (!range) {
-    await createReferenceList();
-  } else {
-    const refs = await generateReferenceList(doc);
-    await editor.edit((editBuilder) => {
-      editBuilder.replace(range, refs.join(docConfig.eol) + docConfig.eol);
-    });
+  if (range) {
+    await clearReferenceListFromFile(range);
   }
+
+  await createReferenceList();
 }
 
 async function generateReferenceList(doc: TextDocument): Promise<string[]> {
@@ -155,7 +170,7 @@ function detectReferenceListRange(doc: TextDocument): Range {
   // find line number of header, and assume 0 for line start
   // if header is not found, this will be last line of the file
   const header = [
-    fullText.split(REFERENCE_HEADER)[0].split(docConfig.eol).length - 1,
+    fullText.split(REFERENCE_HEADER)[0].split(docConfig.eol).length,
     0,
   ];
 
