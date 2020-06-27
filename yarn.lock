@@ -682,10 +682,10 @@ flatted@^2.0.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.2.tgz#4575b21e2bcee7434aa9be662f4b7b5f9c2b5138"
   integrity sha512-r5wGx7YeOwNWNlCA0wQ86zKyDLMQr+/RB8xy74M4hTphfmjlijTSSXGuH8rnvKZnfT9i+75zmd8jcKdMR4O6jA==
 
-foam-workspace-manager@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/foam-workspace-manager/-/foam-workspace-manager-0.1.0.tgz#05f01fafd59c6ee5a08fce04a24ee26c864a87d8"
-  integrity sha512-qtI2NFFzKwSPFQxPCJVBGhg90zrRd/fPtC2UthSX9Md0obOi0HEwcrfzN7SQdj9c5GfTf8QrGSBE6/uMKJpjtg==
+foam-workspace-manager@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/foam-workspace-manager/-/foam-workspace-manager-0.1.1.tgz#95046256edd917c9b780c517d928789fb772c46e"
+  integrity sha512-II7Pn8SYDOSqBFUbk1++gMk+i4BNVCWWFMBPM2OO/FXZY5f3xcAey0qtuZ3gN8RsaYfG8aYCft3F9Tm99wacvg==
   dependencies:
     "@types/lodash" "^4.14.157"
     lodash "^4.17.15"
