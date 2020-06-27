@@ -13,10 +13,9 @@ export const ready = (async () => {
         (f) => f.scheme === "file" && f.path.match(/\.(md|mdx|markdown)/i)
       )
       .map((f) => {
-        const filename = basename(f.fsPath);
         return fs.promises.readFile(f.fsPath).then((data) => {
           let markdown = (data || "").toString();
-          manager.addNoteFromMarkdown(filename, markdown);
+          manager.addNoteFromMarkdown(f.fsPath, markdown);
         });
       })
   );
