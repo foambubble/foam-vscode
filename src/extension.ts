@@ -21,7 +21,7 @@ import {
   Position,
 } from "vscode";
 
-import { basename } from "path";
+import { basename, dirname, relative } from "path";
 import * as ws from "./workspace";
 
 /**
@@ -111,8 +111,9 @@ async function updateReferenceList() {
 }
 
 async function generateReferenceList(doc: TextDocument): Promise<string[]> {
-  const filename = basename(doc.fileName);
-  const id = filename.split(".")[0];
+  const filePath = doc.fileName;
+
+  const id = dropExtension(basename(filePath));
 
   // @todo fix hack
   await ws.ready;
@@ -120,7 +121,7 @@ async function generateReferenceList(doc: TextDocument): Promise<string[]> {
   // update file in index for future reference
   // @todo should probably be an update method instead
   // so we can prune existing references
-  ws.manager.addNoteFromMarkdown(filename, doc.getText());
+  ws.manager.addNoteFromMarkdown(filePath, doc.getText());
 
   // find note by id
   const note = ws.manager.getNoteWithLinks(id);
@@ -132,8 +133,15 @@ async function generateReferenceList(doc: TextDocument): Promise<string[]> {
   const references = [];
 
   for (const link of note.linkedNotes) {
-    // [wiki-link-text]: wiki-link "Page title"
-    references.push(`[${link.id}]: ${link.id.split(".")[0]} "${link.title}"`);
+    const relativePath = relative(dirname(filePath), link.absolutePath);
+    if (relativePath) {
+      const relativePathWithoutExtension = dropExtension(relativePath);
+
+      // [wiki-link-text]: wiki-link "Page title"
+      references.push(
+        `[${link.id}]: ${relativePathWithoutExtension} "${link.title}"`
+      );
+    }
   }
 
   // for (const backlink of note.backlinks) {
@@ -188,6 +196,12 @@ function getText(range: Range): string {
 
 function isMdEditor(editor: TextEditor) {
   return editor && editor.document && editor.document.languageId === "markdown";
+}
+
+function dropExtension(path: string): string {
+  const parts = path.split(".");
+  parts.pop();
+  return parts.join(".");
 }
 
 class WikilinkReferenceCodeLensProvider implements CodeLensProvider {
