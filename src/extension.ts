@@ -79,9 +79,13 @@ async function createReferenceList() {
   if (refs && refs.length) {
     await editor.edit(function (editBuilder) {
       if (editor) {
+        const spacing = hasEmptyTrailing
+          ? docConfig.eol
+          : docConfig.eol + docConfig.eol;
+
         editBuilder.insert(
-          new Position(editor.document.lineCount + 1, 0),
-          docConfig.eol + refs.join(docConfig.eol) + docConfig.eol
+          new Position(editor.document.lineCount, 0),
+          spacing + refs.join(docConfig.eol)
         );
       }
     });
@@ -104,8 +108,14 @@ async function updateReferenceList() {
     await createReferenceList();
   } else {
     const refs = await generateReferenceList(doc);
+
+    // references must always be preceded by an empty line
+    const spacing = doc.lineAt(range.start.line - 1).isEmptyOrWhitespace
+      ? ""
+      : docConfig.eol;
+
     await editor.edit((editBuilder) => {
-      editBuilder.replace(range, refs.join(docConfig.eol) + docConfig.eol);
+      editBuilder.replace(range, spacing + refs.join(docConfig.eol));
     });
   }
 }
@@ -160,27 +170,26 @@ async function generateReferenceList(doc: TextDocument): Promise<string[]> {
 function detectReferenceListRange(doc: TextDocument): Range {
   const fullText = doc.getText();
 
-  // find line number of header, and assume 0 for line start
-  // if header is not found, this will be last line of the file
-  const header = [
-    fullText.split(REFERENCE_HEADER)[0].split(docConfig.eol).length - 1,
-    0,
-  ];
+  const headerIndex = fullText.indexOf(REFERENCE_HEADER);
+  const footerIndex = fullText.lastIndexOf(REFERENCE_FOOTER);
 
-  // find line number and char position where footer ends
-  const footer = [
-    fullText.split(REFERENCE_FOOTER)[0].split(docConfig.eol).length,
-    0,
-  ];
+  if (headerIndex < 0) {
+    return null;
+  }
 
-  // if header and footer are on the same line, that means we have no references section
-  if (header[0] === footer[0]) {
+  const headerLine =
+    fullText.substring(0, headerIndex).split(docConfig.eol).length - 1;
+
+  const footerLine =
+    fullText.substring(0, footerIndex).split(docConfig.eol).length - 1;
+
+  if (headerLine >= footerLine) {
     return null;
   }
 
   return new Range(
-    new Position(header[0], header[1]),
-    new Position(footer[0], footer[1])
+    new Position(headerLine, 0),
+    new Position(footerLine, REFERENCE_FOOTER.length)
   );
 }
 
@@ -188,6 +197,10 @@ function onWillSave(e: TextDocumentWillSaveEvent) {
   if (e.document.languageId === "markdown") {
     e.waitUntil(updateReferenceList());
   }
+}
+
+function hasEmptyTrailing(doc: TextDocument): boolean {
+  return doc.lineAt(doc.lineCount - 1).isEmptyOrWhitespace;
 }
 
 function getText(range: Range): string {
@@ -209,17 +222,18 @@ class WikilinkReferenceCodeLensProvider implements CodeLensProvider {
     document: TextDocument,
     _: CancellationToken
   ): CodeLens[] | Thenable<CodeLens[]> {
+    loadDocConfig();
+
     let range = detectReferenceListRange(document);
     if (!range) {
       return [];
     }
 
     return generateReferenceList(document).then((refs) => {
-      let status =
-        getText(range).replace(/\r?\n|\r/g, docConfig.eol) ===
-        refs.join(docConfig.eol)
-          ? "up to date"
-          : "out of date";
+      const oldRefs = getText(range).replace(/\r?\n|\r/g, docConfig.eol);
+      const newRefs = refs.join(docConfig.eol);
+
+      let status = oldRefs === newRefs ? "up to date" : "out of date";
 
       return [
         new CodeLens(range, {
