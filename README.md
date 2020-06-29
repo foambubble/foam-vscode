@@ -34,6 +34,14 @@ Unused aren't removed from reference lists until you restart VS Code. This will 
 
 ## Release Notes
 
+### 0.1.5
+
+Fix multiple issues related to excess/disappearing newlines:
+
+- https://github.com/foambubble/foam-vscode/issues/3
+- https://github.com/foambubble/foam-vscode/issues/5
+- https://github.com/foambubble/foam-vscode/issues/10
+
 ### 0.1.4
 
 Fix flaky reference block replacement logic that would occasionally leave
