@@ -8,7 +8,7 @@
   "license": "MIT",
   "publisher": "foam",
   "engines": {
-    "vscode": "^1.46.0"
+    "vscode": "^1.45.1"
   },
   "categories": [
     "Other"
