@@ -4,6 +4,10 @@ All notable changes to the "foam-vscode" extension will be documented in this fi
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.1.7] - 2020-07-04
+
+- Support paths to files in subdirectories
+
 ## [0.1.6] - 2020-07-02
 
 - Add support for VS Code 1.45.1
